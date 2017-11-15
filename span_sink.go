@@ -360,7 +360,7 @@ func (ls *lightStepSpanSink) Ingest(ssfSpan ssf.SSFSpan) error {
 	if sp, ok := sp.(*trace.Span); ok {
 		sp.ClientFinishWithOptions(ls.traceClient, finishOpts)
 	} else {
-		log.WithField("type", reflect.TypeOf(sp).Name()).Info("What is this?")
+		log.WithField("type", reflect.TypeOf(sp).String()).Info("What is this?")
 		sp.FinishWithOptions(finishOpts)
 	}
 
