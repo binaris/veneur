@@ -357,8 +357,10 @@ func (ls *lightStepSpanSink) Ingest(ssfSpan ssf.SSFSpan) error {
 	endTime := time.Unix(ssfSpan.EndTimestamp/1e9, ssfSpan.EndTimestamp%1e9)
 	finishOpts := opentracing.FinishOptions{FinishTime: endTime}
 	if sp, ok := sp.(*trace.Span); ok {
+		log.Info("TC FINISH")
 		sp.ClientFinishWithOptions(ls.traceClient, finishOpts)
 	} else {
+		log.Info("FINISH")
 		sp.FinishWithOptions(finishOpts)
 	}
 
@@ -387,5 +389,5 @@ func (ls *lightStepSpanSink) Flush() {
 		ls.stats.Count(totalSpansFlushedMetricKey, count, []string{"sink:lightstep", fmt.Sprintf("service:%s", service)}, 1)
 	}
 	ls.serviceCount = make(map[string]int64)
-	log.WithField("total_spans", totalCount).Debug("Checkpointing flushed spans for Lightstep")
+	log.WithField("total_spans", totalCount).Info("Checkpointing flushed spans for Lightstep")
 }
