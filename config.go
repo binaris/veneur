@@ -17,6 +17,7 @@ type Config struct {
 	ForwardAddress                string    `yaml:"forward_address"`
 	Hostname                      string    `yaml:"hostname"`
 	HTTPAddress                   string    `yaml:"http_address"`
+	IndicatorSpanTimerName        string    `yaml:"indicator_span_timer_name"`
 	InfluxAddress                 string    `yaml:"influx_address"`
 	InfluxConsistency             string    `yaml:"influx_consistency"`
 	InfluxDBName                  string    `yaml:"influx_db_name"`
