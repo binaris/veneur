@@ -3,17 +3,18 @@ package main
 import (
 	"flag"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/getsentry/raven-go"
 	"github.com/sirupsen/logrus"
 	"github.com/stripe/veneur"
-	"github.com/stripe/veneur/ssf"
 	"github.com/stripe/veneur/trace"
 )
 
 var (
 	configFile = flag.String("f", "", "The config file to read for settings.")
+	logFormat  = flag.String("logFormat", "text", "Set log format \"text\" or \"json\"")
 )
 
 func init() {
@@ -22,6 +23,17 @@ func init() {
 
 func main() {
 	flag.Parse()
+
+	if logFormat != nil {
+		switch strings.tolower(*logFormat) {
+		case "json":
+			logrus.SetFormatter(&logrus.JSONFormatter{})
+		case "text":
+			logrus.SetFormatter(&logrus.TextFormatter{})
+		default:
+			logrus.Fatalf("Unknown log format %s", *logFormat)
+		}
+	}
 
 	if configFile == nil || *configFile == "" {
 		logrus.Fatal("You must specify a config file")
