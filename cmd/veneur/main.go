@@ -13,6 +13,7 @@ import (
 
 var (
 	configFile = flag.String("f", "", "The config file to read for settings.")
+	logFormat = flag.String("logFormat", "text", "Set log format \"text\" or \"JSON\"")
 )
 
 func init() {
@@ -21,6 +22,17 @@ func init() {
 
 func main() {
 	flag.Parse()
+
+	if logFormat != nil {
+		switch *logFormat {
+		case "json":
+			logrus.SetFormatter(&logrus.JSONFormatter{})
+		case "text":
+			logrus.SetFormatter(&logrus.TextFormatter{})
+		default:
+			logrus.Fatalf("Unknown log format %s", *logFormat)
+		}
+	}
 
 	if configFile == nil || *configFile == "" {
 		logrus.Fatal("You must specify a config file")
