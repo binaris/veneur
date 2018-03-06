@@ -51,6 +51,7 @@ type Proxy struct {
 	usingConsul     bool
 	usingKubernetes bool
 	enableProfiling bool
+	verbose         EntryLogger
 	TraceClient     *trace.Client
 }
 
@@ -169,6 +170,8 @@ func NewProxyFromConfig(logger *logrus.Logger, conf ProxyConfig) (p Proxy, err e
 	if conf.Debug {
 		logger.SetLevel(logrus.DebugLevel)
 	}
+
+	p.verbose = MakeLevelLogger(GetVerboseLogLevel(conf.VerboseLogLevel))
 
 	logger.WithField("config", conf).Debug("Initialized server")
 
@@ -371,7 +374,7 @@ func (p *Proxy) ProxyTraces(ctx context.Context, traces []DatadogTraceSpan) {
 			// support "Content-Encoding: deflate"
 			err := vhttp.PostHelper(span.Attach(ctx), p.HTTPClient, p.TraceClient, http.MethodPost, fmt.Sprintf("%s/spans", dest), batch, "flush_traces", false, log)
 			if err == nil {
-				verbose(log.WithFields(logrus.Fields{
+				p.verbose(log.WithFields(logrus.Fields{
 					"traces":      len(batch),
 					"destination": dest,
 				}), "Completed flushing traces to Datadog")
@@ -439,7 +442,7 @@ func (p *Proxy) doPost(ctx context.Context, wg *sync.WaitGroup, destination stri
 	endpoint := fmt.Sprintf("%s/import", destination)
 	err := vhttp.PostHelper(ctx, p.HTTPClient, p.TraceClient, http.MethodPost, endpoint, batch, "forward", true, log)
 	if err == nil {
-		verbose(log.WithField("metrics", batchSize), "Completed forward to upstream Veneur")
+		p.verbose(log.WithField("metrics", batchSize), "Completed forward to upstream Veneur")
 	} else {
 		samples.Add(ssf.Count("forward.error_total", 1, map[string]string{"cause": "post"}))
 		log.WithError(err).WithFields(logrus.Fields{

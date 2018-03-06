@@ -35,3 +35,8 @@ trace_api_address: "http://localhost:7777"
 consul_trace_service_name: "traceServiceName"
 
 sentry_dsn: ""
+
+# Sets level for logs that appear periodically as part of normal
+# execution (currently "Completed..." logs).  Can be any logrus log
+# level (default INFO, can set to DEBUG).
+verbose_log_level: ""

@@ -35,5 +35,7 @@ _work
 *.swp
 *.swo
 *.swn
+*~
+\#*
 coverage.out
 .DS_Store

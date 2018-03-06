@@ -14,4 +14,5 @@ type ProxyConfig struct {
 	StatsAddress             string `yaml:"stats_address"`
 	TraceAddress             string `yaml:"trace_address"`
 	TraceAPIAddress          string `yaml:"trace_api_address"`
+	VerboseLogLevel          string `yaml:"verbose_log_level"`
 }
